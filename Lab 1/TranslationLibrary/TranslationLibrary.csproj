@@ -4,10 +4,10 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{285067C2-CA4A-40EA-90E4-9CE967142BE5}</ProjectGuid>
+    <ProjectGuid>{A3AF2A1B-155A-47FB-A473-151B06A1F374}</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <RootNamespace>TranslationServer</RootNamespace>
-    <AssemblyName>TranslationServer</AssemblyName>
+    <RootNamespace>TranslationLibrary</RootNamespace>
+    <AssemblyName>TranslationLibrary</AssemblyName>
     <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
@@ -45,7 +45,6 @@
   <ItemGroup>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Translator.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
