@@ -1,50 +1,63 @@
 ﻿using System;
 using System.Net.Sockets;
+using System.Text;
+
 
 namespace Client
 {
-    class Program
+    internal static class Program
     {
-        static void Main(string[] args
-        {
-            string hostname; int port;
-            Console.Write("Please enter the destination host or IP address: ");
-            hostname = Console.ReadLine();
-            Console.Write("Please enter the port: ");
-            port = int.Parse(Console.ReadLine());
-            Console.Write("Please enter the message: ");
-            String Message = Console.ReadLine();
-            NetworkStream nStream = client.GetStream();
-            nStream.Write(rawData, 0, rawData.Length);
-            Console.Write("Press <ENTER> to quit the client...");
-            Console.ReadLine();
-            //Unsure how to implement
-            //using (TcpClient client = new TcpClient(hostname, port))
-            //{
+        private const String Hostname = "localhost";
+        private const int Length = 256;
+        private const ushort Port = 5002;
 
-            //}
+        private static int Main(String[] args)
+        {
+            Console.Write("Please enter a message: ");
+            String message = Console.ReadLine();
+
+            if (message.Length > Program.Length)
+            {
+                message = message.Substring(0, Program.Length);
+            }
+
+            int encryptionKey = 1;
+            byte[] rawData = Program.Serialize(message, encryptionKey);
+
+            using (TcpClient client = new TcpClient())
+            {
+                client.Connect(Program.Hostname, Program.Port);
+
+                using (NetworkStream ns = client.GetStream())
+                {
+                    ns.Write(rawData, 0, rawData.Length);
+                }
+            }
+
+            Console.WriteLine("Press any key to exit...");
+            Console.ReadKey(true);
+            return 0;
         }
-        public static byte[] Serialize(string Message, int EncryptionKey)
-        {
 
-            int MessageLength;
+        private static byte[] Serialize(String message, int encryptionKey)
+        {
             int index = 0;
-            byte[] ascii = System.Text.Encoding.ASCII.GetBytes(Message);
-            MessageLength = ascii.Length + 9;
-            byte[] rawData = new byte[MessageLength];
+            byte[] ascii = Encoding.ASCII.GetBytes(message);
+            int messageLength = ascii.Length + 9;
+            byte[] rawData = new byte[messageLength];
             rawData[index++] = 0;
             rawData[index++] = 0;
             rawData[index++] = 0;
             rawData[index++] = 1;
             int remainingLength = ascii.Length + 3;
-            rawData[index++] = (byte)((remainingLength & 0xff00) >> 8);
-            rawData[index++] = (byte)(remainingLength & 0xff);
-            rawData[index++] = (byte)EncryptionKey;
+            rawData[index++] = (byte)((remainingLength & 0xFF00) >> 8);
+            rawData[index++] = (byte)(remainingLength & 0xFF);
+            rawData[index++] = (byte)encryptionKey;
             int bodyLength = ascii.Length;
-            rawData[index++] = (byte)((bodyLength & 0xff00) >> 8);
-            rawData[index++] = (byte)(bodyLength & 0xff);
+            rawData[index++] = (byte)((bodyLength & 0xFF00) >> 8);
+            rawData[index++] = (byte)(bodyLength & 0xFF);
             Array.Copy(ascii, 0, rawData, index, ascii.Length);
             return rawData;
-        }
+        }
     }
 }
